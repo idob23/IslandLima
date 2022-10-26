@@ -28,15 +28,18 @@ public abstract class Animal implements Cloneable {
         Animal_Properties annotation = aClass.getAnnotation(Animal_Properties.class);
         int maxAreaPopulation = annotation.maxAreaPopulation();
 
-
         int oldCellRow = cell.getRow();
         int oldCellCol = cell.getCol();
         if (speed != 0) {
             int newCellRow = cell.getRow() + ThreadLocalRandom.current().nextInt(0, speed);
             int newCellCol = cell.getCol() + ThreadLocalRandom.current().nextInt(0, speed);
 
+
             if (!(newCellRow >= Settings.row || newCellCol >= Settings.col ||
                     (newCellRow == oldCellRow && newCellCol == oldCellCol))) {
+
+                cell.getLock().lock();
+
                 Cell cell1 = Field.field[oldCellRow][oldCellCol];
                 Cell cell2 = Field.field[newCellRow][newCellCol];
                 Set<Animal> oldCellSet = cell1.getAnimals().get(animal.getClass().getSimpleName());
@@ -47,6 +50,8 @@ public abstract class Animal implements Cloneable {
 
 
                 oldCellSet.remove(animal);
+
+                cell.getLock().unlock();
             }
         }
 
